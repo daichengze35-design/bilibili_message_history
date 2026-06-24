@@ -40,9 +40,9 @@ def write_history():
             
             class_text = history.xpath("./@class")[0]
             if "_MsgIsMe_" in class_text:
-                sender = "戴承泽"
+                sender = "you"
             else:
-                sender = "韩天然"
+                sender = "your friend"
         except:
             print(Exception)
         else:
