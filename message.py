@@ -10,9 +10,16 @@ import time
 import os
 import random
 
-os.makedirs("./bilibili/msghistory", exist_ok=True)
+BASE_DIR = Path(__file__).resolve().parent
+WORKSPACE_DIR = BASE_DIR.parent
+HISTORY_DIR = BASE_DIR / "msghistory"
+HISTORY_FILE = HISTORY_DIR / "history.txt"
+PROFILE_DIR = BASE_DIR / "selenium_chrome_profile"
+STEALTH_JS = BASE_DIR / "stealth.min.js"
+if not STEALTH_JS.exists():
+    STEALTH_JS = WORKSPACE_DIR / "stealth.min.js"
 
-PROFILE_DIR = Path("./bilibili/selenium_chrome_profile").resolve()
+os.makedirs(HISTORY_DIR, exist_ok=True)
 
 options = Options()
 options.add_argument(f"--user-data-dir={PROFILE_DIR}")
@@ -23,10 +30,8 @@ wait_2m = WebDriverWait(driver, 120)
 
 def write_history():
     print ("start write history")
-    f = open("bilibili/msghistory/history.txt", mode = "w", encoding = "utf-8")
+    f = open(HISTORY_FILE, mode = "w", encoding = "utf-8")
     html = driver.page_source
-    with open("page_source.html", "w", encoding = "utf-8") as file:
-        file.write(html)
     xpath = etree.HTML(html)
     history_list = xpath.xpath("/html/body/div[1]/div[3]/main/div/div[2]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div")
     for history in reversed(history_list):
@@ -49,7 +54,7 @@ def write_history():
             f.write(sender + ':' + '\n' + msg + '\n')
     f.close()
 
-with open('./stealth.min.js') as f:
+with open(STEALTH_JS, encoding="utf-8") as f:
     js = f.read()
 driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source": js})
 

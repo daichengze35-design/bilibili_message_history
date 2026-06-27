@@ -8,7 +8,12 @@ from selenium.webdriver import ActionChains
 from selenium.common.exceptions import TimeoutException
 import time
 
-PROFILE_DIR = Path("./bilibili/selenium_chrome_profile").resolve()
+BASE_DIR = Path(__file__).resolve().parent
+WORKSPACE_DIR = BASE_DIR.parent
+PROFILE_DIR = BASE_DIR / "selenium_chrome_profile"
+STEALTH_JS = BASE_DIR / "stealth.min.js"
+if not STEALTH_JS.exists():
+    STEALTH_JS = WORKSPACE_DIR / "stealth.min.js"
 
 options = Options()
 options.add_argument(f"--user-data-dir={PROFILE_DIR}")
@@ -17,7 +22,7 @@ driver = webdriver.Chrome(options=options)
 wait_10s = WebDriverWait(driver, 10)
 wait_2m = WebDriverWait(driver, 120)
 
-with open('./stealth.min.js') as f:
+with open(STEALTH_JS, encoding="utf-8") as f:
     js = f.read()
 driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source": js})
 
